@@ -1,0 +1,58 @@
+name: Terraform Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - 'task*'
+  pull_request:
+    branches:
+      - main
+      - 'task*'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: "us-east-1"
+  TF_WORKING_DIR: "./roots"
+
+jobs:
+  terraform:
+    name: Terraform CI/CD
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.IAM_ROLE }}
+          role-session-name: GitHubActionsSession
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init \
+          -backend-config="bucket=unik-backet-for-me" \
+          -backend-config="key=terraform.tfstate" \
+          -backend-config="region=${AWS_REGION}"
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -var-file=devops.tfvars
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false -var-file=devops.tfvars
+         
