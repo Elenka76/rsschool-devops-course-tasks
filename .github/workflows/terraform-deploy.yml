@@ -45,10 +45,8 @@ jobs:
         run: terraform fmt -check -recursive
 
       - name: Terraform Init
-        run: terraform init \
-          -backend-config="bucket=unik-backet-for-me" \
-          -backend-config="key=terraform.tfstate" \
-          -backend-config="region=${AWS_REGION}"
+        run: terraform init -backend-config="bucket=unik-backet-for-me" -backend-config="key=terraform.tfstate" -backend-config="region=${AWS_REGION}"
+
 
       - name: Terraform Plan
         run: terraform plan -input=false -var-file=devops.tfvars
