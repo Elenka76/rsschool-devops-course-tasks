@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "statebucket" {
   bucket = var.bucket_name
-  
+
   tags = {
     Name        = "Terraform State Bucket"
     Environment = var.environment_name
@@ -13,7 +13,7 @@ resource "aws_s3_bucket" "statebucket" {
 
 resource "aws_s3_bucket_versioning" "statebucket_versioning" {
   depends_on = [aws_s3_bucket.statebucket]
-  bucket = aws_s3_bucket.statebucket.id
+  bucket     = aws_s3_bucket.statebucket.id
 
   versioning_configuration {
     status = "Enabled"
