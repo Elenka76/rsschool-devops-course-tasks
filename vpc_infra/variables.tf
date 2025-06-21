@@ -1,14 +1,4 @@
-#task_1
-variable "github_org" {
-  type = string
-}
-
-variable "github_repo" {
-  type = string
-}
-
-#VPC-infra
-
+# VPC
 variable "project_name" {
   description = "The name of a project"
   type        = string
@@ -34,6 +24,7 @@ variable "private_subnets" {
   type        = list(string)
 }
 
+#Bastion host
 variable "ami_bastion" {
   description = "ami id for bastion_server"
 }
